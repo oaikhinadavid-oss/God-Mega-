@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickFix Global | Lagos Automotive Infrastructure</title>
+    
+    <!-- PWA / App Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#020617">
+
+    <!-- Assets -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --obsidian: #020617; --slate: #0F172A; --cyan: #22D3EE;
+            --neon: #10B981; --danger: #F43F5E; --gold: #F59E0B;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--obsidian); color: #F8FAFC; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* Security Advisory */
+        .scam-banner { background: var(--danger); color: white; text-align: center; padding: 12px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; position: sticky; top: 0; z-index: 1100; border-bottom: 2px solid rgba(0,0,0,0.3); }
+
+        header { padding: 20px 6%; display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(15px); position: sticky; top: 43px; z-index: 1000; border-bottom: 1px solid var(--border); }
+        .logo { font-size: 1.3rem; font-weight: 800; color: white; text-decoration: none; }
+        .logo span { color: var(--cyan); }
+
+        .mode-toggle { display: flex; background: var(--slate); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
+        .mode-btn { padding: 8px 15px; border-radius: 8px; border: none; background: transparent; color: #64748B; font-size: 0.65rem; font-weight: 800; cursor: pointer; }
+        .mode-btn.active { background: var(--cyan); color: var(--obsidian); }
+
+        /* Market Intelligence Index */
+        .market-intel { max-width: 900px; margin: 30px auto; padding: 20px; background: rgba(34, 211, 238, 0.03); border-radius: 16px; border: 1px solid var(--border); }
+        .intel-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; font-weight: 800; color: var(--cyan); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        .price-node { background: var(--slate); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .price-node span { font-size: 0.6rem; color: #94A3B8; display: block; margin-bottom: 4px; }
+        .price-node b { color: white; font-size: 0.95rem; color: var(--gold); }
+
+        /* Hero */
+        .hero { padding: 60px 6% 40px; text-align: center; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; }
+
+        /* Auto Match GPS Button */
+        .btn-auto-match { background: linear-gradient(45deg, var(--cyan), #3b82f6); color: var(--obsidian); padding: 20px 40px; border: none; border-radius: 50px; font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); margin: 0 auto 40px; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; }
+
+        /* Command Bar */
+        .command-bar { max-width: 900px; margin: 0 auto 50px; background: var(--slate); padding: 10px; border-radius: 20px; border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 10px; }
+        @media (max-width: 768px) { .command-bar { grid-template-columns: 1fr; } }
+        select, .command-bar input { background: transparent; border: none; padding: 15px; color: white; font-weight: 600; outline: none; font-size: 0.9rem; }
+        select { border-right: 1px solid var(--border); }
+
+        /* Grid */
+        .container { padding: 0 6% 100px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; }
+
+        /* Card */
+        .card { background: var(--slate); border-radius: 28px; padding: 35px; border: 1px solid var(--border); position: relative; transition: 0.4s; overflow: hidden; }
+        .card.busy { opacity: 0.5; pointer-events: none; }
+        .card:hover { border-color: var(--cyan); transform: translateY(-5px); }
+        
+        .distance-tag { position: absolute; top: 20px; left: 20px; background: rgba(16, 185, 129, 0.1); color: var(--neon); padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; border: 1px solid var(--neon); }
+        .profile-wrap { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; margin-top: 20px; }
+        .profile-img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--cyan); object-fit: cover; background: #000; }
+        .tech-info h3 { font-size: 1.3rem; font-weight: 800; }
+        .stars { color: var(--gold); font-size: 0.75rem; font-weight: 800; }
+
+        .btn-action { width: 100%; padding: 18px; border-radius: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; border: none; margin-bottom: 10px; }
+        .btn-call { background: var(--cyan); color: var(--obsidian); }
+        .btn-gps { background: transparent; border: 1px solid var(--neon); color: var(--neon); }
+
+        /* Portals */
+        .portal { display: none; }
+        .portal.active { display: block; }
+
+        /* Payment Sync */
+        #payment-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,6,23,0.98); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        .payment-card { background: var(--slate); padding: 40px; border-radius: 32px; border: 1px solid var(--neon); text-align: center; max-width: 450px; width: 100%; }
+        .amt-display { font-size: 3.5rem; font-weight: 800; color: white; margin: 15px 0; }
+
+        footer { text-align: center; padding: 60px 6%; color: #475569; font-size: 0.7rem; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<div class="scam-banner">⚠️ SCAM ALERT: ANY TECHNICIAN ASKING FOR CASH IS IN VIOLATION. PAY ONLINE FOR 7-DAY WARRANTY. ⚠️</div>
+
+<header>
+    <a href="#" class="logo">QUICK<span>FIX</span> GLOBAL</a>
+    <div class="mode-toggle">
+        <button class="mode-btn active" onclick="switchMode('client', this)">CLIENT</button>
+        <button class="mode-btn" onclick="switchMode('tech', this)">TECHNICIAN</button>
+    </div>
+</header>
+
+<!-- CLIENT VIEW -->
+<div id="client-portal" class="portal active">
+    <div class="hero">
+        <h1>Lagos Automotive Command.</h1>
+        <button class="btn-auto-match" id="autoMatchBtn" onclick="findNearestMechanic()">
+            <i class="fas fa-location-crosshairs"></i> Auto-Match Nearest Mechanic
+        </button>
+    </div>
+
+    <!-- MARKET INTELLIGENCE -->
+    <div class="market-intel">
+        <div class="intel-header"><span>Market Intelligence Index (Lagos)</span><span style="color:var(--neon)">Status: Live</span></div>
+        <div class="price-grid">
+            <div class="price-node"><span>Toyota Pads</span><b>₦8.5k - ₦15k</b></div>
+            <div class="price-node"><span>Engine Oil</span><b>₦25k - ₦38k</b></div>
+            <div class="price-node"><span>Fuel Pump</span><b>₦18k - ₦28k</b></div>
+            <div class="price-node"><span>12V Battery</span><b>₦45k - ₦65k</b></div>
+        </div>
+    </div>
+
+    <div class="command-bar" style="padding: 0 6%;">
+        <select id="brandSelect" onchange="runSearch()"><option value="all">ANY BRAND</option><option value="toyota">TOYOTA</option><option value="honda">HONDA</option></select>
+        <select id="areaSelect" onchange="runSearch()"><option value="all">LAGOS AREA</option><option value="Ikeja">IKEJA</option><option value="Lekki">LEKKI</option></select>
+        <input type="text" id="streetInput" placeholder="SEARCH STREET..." onkeyup="runSearch()">
+    </div>
+
+    <div class="container">
+        <div id="status-msg" style="text-align:center; font-weight:800; color:var(--cyan); letter-spacing:2px;">ESTABLISHING DATA LINK...</div>
+        <div class="grid" id="mechanic-list"></div>
+    </div>
+</div>
+
+<!-- TECHNICIAN VIEW -->
+<div id="tech-portal" class="portal">
+    <div style="max-width:450px; margin:40px auto; background:var(--slate); padding:40px; border-radius:32px; border:1px solid var(--cyan);">
+        <h2 style="margin-bottom:20px;">Technician Hub</h2>
+        <input type="text" id="client-phone" style="width:100%; padding:15px; background:var(--obsidian); border:none; color:white; border-radius:12px; margin-bottom:15px;" placeholder="Client WhatsApp Phone">
+        <input type="number" id="final-amt" style="width:100%; padding:15px; background:var(--obsidian); border:none; color:white; border-radius:12px; margin-bottom:15px;" placeholder="Total Amount (₦)">
+        <button onclick="sendInvoice()" class="btn-action btn-call">Generate Secure Invoice</button>
+    </div>
+</div>
+
+<!-- PAYMENT OVERLAY -->
+<div id="payment-overlay">
+    <div class="payment-card">
+        <div style="color:var(--neon); font-weight:800; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase;">Invoice Received</div>
+        <div class="amt-display" id="display-amt">₦0</div>
+        <button class="btn-action" style="background:var(--neon); color:black;" onclick="processFinalPayment()">Pay & Activate Warranty</button>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 QUICKFIX GLOBAL INFRASTRUCTURE. DATA ENCRYPTED.</p>
+</footer>
+
+<script>
+    // 1. REPLACE WITH YOUR PAYSTACK KEY
+    const paystackPublicKey = 'pk_test_PASTE_YOUR_KEY_HERE'; 
+    // 2. YOUR WHATSAPP FOR OWNER TRACKING
+    const ownerWhatsApp = '2348104270230'; 
+    // 3. YOUR GOOGLE SHEET LINK
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/1wj_SzI7EkcjIeZPhc5X5cPcCXyvMtMl4HIL5Ic-xkKQ/export?format=csv';
+
+    function switchMode(mode, btn) {
+        document.querySelectorAll('.portal').forEach(p => p.style.display = 'none');
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(mode + '-portal').classList.add('active');
+        btn.classList.add('active');
+    }
+
+    let allMechanics = [];
+
+    // PROXIMITY LOGIC
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; 
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
+    }
+
+    async function loadData() {
+        try {
+            const response = await fetch(sheetUrl);
+            const text = await response.text();
+            const rows = text.split('\n').filter(r => r.trim() !== "").slice(1);
+            
+            // CLEAN DATA BASED ON YOUR COLUMN A-N ARRANGEMENT
+            allMechanics = rows.map((row) => {
+                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                return {
+                    name: cols[0]?.trim() || "", area: cols[1]?.trim() || "", phone: cols[2]?.trim() || "",
+                    service: cols[3]?.trim() || "", address: cols[4]?.trim() || "",
+                    subaccount: cols[8]?.trim() || "", rating: parseFloat(cols[9]) || 5.0,
+                    photo: cols[10]?.trim() || "", lat: parseFloat(cols[11]) || null,
+                    lng: parseFloat(cols[12]) || null, status: cols[13]?.trim() || "Available",
+                    distance: null
+                };
+            }).sort((a,b) => b.rating - a.rating);
+
+            document.getElementById('status-msg').style.display = "none";
+            renderCards(allMechanics);
+        } catch (e) { document.getElementById('status-msg').innerText = "System Sync Error. Check Sheet Sharing."; }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('pay')) {
+            document.getElementById('display-amt').innerText = "₦" + parseInt(urlParams.get('pay')).toLocaleString();
+            document.getElementById('payment-overlay').style.display = 'flex';
+        }
+    }
+
+    function findNearestMechanic() {
+        const btn = document.getElementById('autoMatchBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating via Satellite...';
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                allMechanics.forEach(m => {
+                    if (m.lat && m.lng) m.distance = calculateDistance(pos.coords.latitude, pos.coords.longitude, m.lat, m.lng);
+                });
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Nearest Technicians Found';
+                renderCards([...allMechanics].sort((a, b) => (a.distance || 999) - (b.distance || 999)));
+            });
+        }
+    }
+
+    function renderCards(data) {
+        const list = document.getElementById('mechanic-list');
+        list.innerHTML = "";
+        data.forEach(m => {
+            let distBadge = m.distance ? `<div class="distance-tag"><i class="fas fa-route"></i> ${m.distance.toFixed(1)} km away</div>` : '';
+            let busyClass = m.status.toLowerCase() === 'busy' ? 'busy' : '';
+            let waPhone = m.phone.replace(/[^0-9]/g, '');
+            if(waPhone.startsWith('0')) waPhone = '234' + waPhone.substring(1);
+            
+            list.innerHTML += `
+                <div class="card ${busyClass}">
+                    ${distBadge}
+                    <div class="tier-badge">${m.rating >= 4.8 ? 'Elite Master' : 'Verified Pro'}</div>
+                    <div class="profile-wrap">
+                        <img src="${m.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="profile-img">
+                        <div class="tech-info">
+                            <h3>${m.name}</h3>
+                            <div class="stars"><i class="fas fa-star"></i> ${m.rating.toFixed(1)}</div>
+                        </div>
+                    </div>
+                    <div class="tech-meta">${m.service} Specialist | ${m.area}</div>
+                    <a href="tel:${m.phone}" class="btn-action btn-call" onclick="logOwner('${m.name}', 'Calling')">Initialize Call</a>
+                    <a href="https://wa.me/${waPhone}?text=I_need_your_service_at:" class="btn-action btn-gps" onclick="logOwner('${m.name}', 'WhatsApp')">WhatsApp Location</a>
+                </div>
+            `;
+        });
+    }
+
+    function logOwner(name, type) {
+        window.open(`https://wa.me/${ownerWhatsApp}?text=${encodeURIComponent('🚨 '+type+': Client connecting with '+name)}`);
+    }
+
+    function sendInvoice() {
+        const phone = document.getElementById('client-phone').value;
+        const amt = document.getElementById('final-amt').value;
+        const link = `${window.location.href.split('?')[0]}?pay=${amt}`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent('QuickFix: Pay here for warranty: ' + link)}`);
+        window.open(`https://wa.me/${ownerWhatsApp}?text=${encodeURIComponent('💰 INVOICE: ₦' + amt + ' sent to ' + phone)}`);
+    }
+
+    function processFinalPayment() {
+        const amt = new URLSearchParams(window.location.search).get('pay');
+        let handler = PaystackPop.setup({
+            key: paystackPublicKey,
+            email: "payments@quickfix.ng",
+            amount: amt * 100,
+            callback: function() {
+                alert("PAYMENT SUCCESSFUL! Warranty Active.");
+                window.location.href = window.location.href.split('?')[0];
+            }
+        });
+        handler.openIframe();
+    }
+
+    function runSearch() {
+        const area = document.getElementById('areaSelect').value.toLowerCase();
+        const street = document.getElementById('streetInput').value.toLowerCase();
+        const filtered = allMechanics.filter(m => (area === 'all' || m.area.toLowerCase() === area) && (m.address.toLowerCase().includes(street) || m.name.toLowerCase().includes(street)));
+        renderCards(filtered);
+    }
+
+    loadData();
+</script>
+</body>
+</html>
